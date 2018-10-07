@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,6 +20,9 @@ func Init() *sql.DB {
 	if err != nil {
 		log.Panic(err)
 	}
+	db.SetConnMaxLifetime(time.Minute * 5)
+	db.SetMaxIdleConns(0)
+	db.SetMaxOpenConns(5)
 
 	return db
 }

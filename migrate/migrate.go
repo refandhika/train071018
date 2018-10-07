@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -15,10 +16,12 @@ func main() {
 		"("+os.Getenv("MYSQL_ADDRESS")+
 		":"+os.Getenv("MYSQL_PORT")+
 		")/?charset=utf8&parseTime=True&loc=Local")
-
 	if err != nil {
 		log.Panic(err)
 	}
+	db.SetConnMaxLifetime(time.Minute * 5)
+	db.SetMaxIdleConns(0)
+	db.SetMaxOpenConns(5)
 	defer db.Close()
 
 	query1 := "CREATE TABLE IF NOT EXISTS `taxdata` (" +
@@ -47,5 +50,12 @@ func main() {
 		log.Panic(err)
 	}
 
-	log.Print("Migrate DONE!")
+	if err == nil {
+		log.Print("Migrate DONE!")
+		return
+	} else {
+		log.Print("Retry Migrate!")
+		main()
+	}
+
 }

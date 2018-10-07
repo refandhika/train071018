@@ -3,7 +3,8 @@
 ## Specification
 - Docker with:
 	- Go
-	- MySql
+	- MySQL
 
 ## How To Run
 - `docker-compose up`
+- Open `http://localhost:4545` in browser
