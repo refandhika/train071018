@@ -7,8 +7,6 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: trainpass
             MYSQL_DATABASE: train071018
-            MYSQL_USER: trainuser
-            MYSQL_PASSWORD: trainuserpass
         ports:
             - 3307:3306
         networks:
@@ -23,8 +21,8 @@ services:
                 - db
                 - migrate
         environment:
-            MYSQL_USER: trainuser
-            MYSQL_PASS: trainuserpass
+            MYSQL_USER: root
+            MYSQL_PASS: trainpass
             MYSQL_DB: train071018
             MYSQL_PROTOCOL: tcp
             MYSQL_ADDRESS: 172.21.0.1
