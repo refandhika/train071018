@@ -1,0 +1,62 @@
+<html>
+	<head>
+		<title>Tax Calculator</title>
+		<style>
+			div {
+				display: block;
+				padding: 5px;
+			}
+			table, th, td {
+				border: 1px solid #000;
+				text-align: center;
+			}
+			th {
+				font-weight: bold;
+			}
+			input[type=number]::-webkit-inner-spin-button,
+			input[type=number]::-webkit-outer-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<form action="/" method="post">
+				<div>Name: <input type="text" name="name"></div>
+				<div>Tax Code: <input type="number" name="code" min="1" max="3"></div>
+				<div>Price: <input type="number" name="price" min="0" step="0.0000000001"></div>
+				<div><input type="submit" value="Submit"></div>
+			</form>
+		</div>
+		<div>
+			<div>Price Subtotal: {{printf "%.2f" .Totals.PriceTotal}}</div>
+			<div>Tax Subtotal: {{printf "%.2f" .Totals.TaxTotal}}</div>
+			<div>Grand Total: {{printf "%.2f" .Totals.GrandTotal}}</div>
+		</div>
+		<div>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Tax Code</th>
+					<th>Type</th>
+					<th>Refundable</th>
+					<th>Price</th>
+					<th>Tax</th>
+					<th>Amount</th>
+				</tr>
+				{{range .Output}}
+				<tr>
+					<td>{{.Name}}</td>
+					<td>{{.TaxCode}}</td>
+					<td>{{.Type}}</td>
+					<td>{{if .Refundable}}Yes{{else}}No{{end}}</td>
+					<td>{{.Price}}</td>
+					<td>{{.Tax}}</td>
+					<td>{{.Amount}}</td>
+				</tr>
+				{{end}}
+			</table>
+		</div>
+	</body>
+</html>
