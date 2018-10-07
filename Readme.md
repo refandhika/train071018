@@ -2,8 +2,8 @@
 
 ## Specification
 - Docker with:
--- Go
--- MySql
+	- Go
+	- MySql
 
 ## How To Run
 - `docker-compose up`

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/refandhika/train071018/app/controllers"
@@ -15,6 +16,6 @@ func main() {
 	router.GET("/", taxController.TaxShow)
 	router.POST("/", taxController.TaxSubmit)
 
-	log.Print("Listening to Port 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Print("Listening to Port " + os.Getenv("APP_PORT"))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("APP_PORT"), router))
 }

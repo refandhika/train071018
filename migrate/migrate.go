@@ -2,18 +2,26 @@ package main
 
 import (
 	"database/sql"
+	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	db, err := sql.Open("mysql", "test:test@/?charset=utf8&parseTime=True&loc=Local")
+	db, err := sql.Open("mysql", os.Getenv("MYSQL_USER")+
+		":"+os.Getenv("MYSQL_PASS")+
+		"@"+os.Getenv("MYSQL_PROTOCOL")+
+		"("+os.Getenv("MYSQL_ADDRESS")+
+		":"+os.Getenv("MYSQL_PORT")+
+		")/?charset=utf8&parseTime=True&loc=Local")
+
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	defer db.Close()
 
-	query1 := "CREATE TABLE `taxdata` (" +
+	query1 := "CREATE TABLE IF NOT EXISTS `taxdata` (" +
 		"`id` INT(64) NOT NULL AUTO_INCREMENT," +
 		"`name` VARCHAR(255) NOT NULL," +
 		"`code` INT(10) NOT NULL," +
@@ -24,18 +32,20 @@ func main() {
 		"PRIMARY KEY (`id`)" +
 		")"
 
-	_, err = db.Exec("CREATE DATABASE train071018")
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + os.Getenv("MYSQL_DB"))
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
-	_, err = db.Exec("USE train071018")
+	_, err = db.Exec("USE " + os.Getenv("MYSQL_DB"))
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	_, err = db.Exec(query1)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
+
+	log.Print("Migrate DONE!")
 }
