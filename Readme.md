@@ -8,5 +8,9 @@
 ## How To Run
 - `docker-compose up`
 - Wait `mysql` and `app` up
-- Wait migration to finish
+- Wait `migrate` to finish on migration
 - Open `http://localhost:4545` in browser
+
+## Notes
+- `migrate` will keep retrying until `mysql` finish loading
+- Wait everything loaded before opening the app on the browser
