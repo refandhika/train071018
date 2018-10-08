@@ -3,17 +3,44 @@ package main
 import (
 	"database/sql"
 	"log"
+	"net"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
+func GetGateway() string {
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		log.Panic(err)
+	}
+	var ip net.IP
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			log.Panic(err)
+		}
+		for _, addr := range addrs {
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+		}
+	}
+	split := strings.Split(ip.String(), ".")
+	split[len(split)-1] = "1"
+	return strings.Join(split, ".")
+}
+
 func main() {
 	db, err := sql.Open("mysql", os.Getenv("MYSQL_USER")+
 		":"+os.Getenv("MYSQL_PASS")+
 		"@"+os.Getenv("MYSQL_PROTOCOL")+
-		"("+os.Getenv("MYSQL_ADDRESS")+
+		"("+GetGateway()+
 		":"+os.Getenv("MYSQL_PORT")+
 		")/?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
@@ -38,24 +65,19 @@ func main() {
 	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + os.Getenv("MYSQL_DB"))
 	if err != nil {
 		log.Panic(err)
-	}
-
-	_, err = db.Exec("USE " + os.Getenv("MYSQL_DB"))
-	if err != nil {
-		log.Panic(err)
-	}
-
-	_, err = db.Exec(query1)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	if err == nil {
-		log.Print("Migrate DONE!")
-		return
 	} else {
-		log.Print("Retry Migrate!")
-		main()
+		_, err = db.Exec("USE " + os.Getenv("MYSQL_DB"))
+		if err != nil {
+			log.Panic(err)
+		} else {
+			_, err = db.Exec(query1)
+			if err != nil {
+				log.Panic(err)
+			}
+		}
 	}
+
+	log.Print("Migrate END!")
+	return
 
 }

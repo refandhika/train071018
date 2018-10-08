@@ -9,8 +9,6 @@ services:
             MYSQL_DATABASE: train071018
         ports:
             - 3307:3306
-        networks:
-            - webnet
     app:
         image: golang
         volumes:
@@ -25,7 +23,7 @@ services:
             MYSQL_PASS: trainpass
             MYSQL_DB: train071018
             MYSQL_PROTOCOL: tcp
-            MYSQL_ADDRESS: 172.21.0.1
+            MYSQL_ADDRESS: db
             MYSQL_PORT: 3307
             APP_PORT: 8080
         ports:
@@ -34,13 +32,12 @@ services:
             bash -c "go get -d -v ./...
             && go build
             && ./app"
-        networks:
-            - webnet
     migrate:
         image: golang
         volumes:
             - .:/go/src/train071018
         working_dir: /go/src/train071018/migrate
+        restart: on-failure
         depends_on:
             - db
         environment:
@@ -48,14 +45,9 @@ services:
             MYSQL_PASS: trainpass
             MYSQL_DB: train071018
             MYSQL_PROTOCOL: tcp
-            MYSQL_ADDRESS: 172.21.0.1
+            MYSQL_ADDRESS: db
             MYSQL_PORT: 3307
         command: >
             bash -c "go get -d -v ./...
             && go build
             && ./migrate"
-        networks:
-            - webnet
-
-networks:
-    webnet:
