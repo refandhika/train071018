@@ -42,7 +42,8 @@ func main() {
 		"@"+os.Getenv("MYSQL_PROTOCOL")+
 		"("+GetGateway()+
 		":"+os.Getenv("MYSQL_PORT")+
-		")/?charset=utf8&parseTime=True&loc=Local")
+		")/"+os.Getenv("MYSQL_DB")+
+		"?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		log.Panic(err)
 	}
